@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>_ap_bar - Admin Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body class="login-body">
+    <!-- LOGIN FORMULAIRE (par défaut) -->
+    <div id="loginForm" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-icon">🔐</div>
+            <h1>Admin Login</h1>
+            <p>Connectez-vous à votre tableau de bord</p>
+            
+            <form id="loginFormContent">
+                <div class="input-group">
+                    <label>Numéro de téléphone</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="phone" placeholder="+226 70 00 00 00" required>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Mot de passe</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">Se connecter</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Pas encore de compte ? <a href="#" onclick="showSignup()">Créer un compte admin</a></p>
+            </div>
+            
+            <div id="loginError" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- SIGNUP FORMULAIRE (caché) -->
+    <div id="signupForm" class="auth-container" style="display: none;">
+        <div class="auth-card">
+            <div class="auth-icon">👤</div>
+            <h1>Créer Compte Admin</h1>
+            <p style="color: #ff6b35; font-weight: 600;">⚠️ Maximum 6 administrateurs autorisés</p>
+            
+            <form id="signupFormContent">
+                <div class="input-group">
+                    <label>Nom complet</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" placeholder="John Doe" required>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Numéro de téléphone</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="signupPhone" placeholder="+226 70 00 00 00" required>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Mot de passe (min 6 caractères)</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="signupPassword" placeholder="••••••••" minlength="6" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">Créer mon compte</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Déjà inscrit ? <a href="#" onclick="showLogin()">Se connecter</a></p>
+            </div>
+            
+            <div id="signupError" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // ✅ LOGIN
+        document.getElementById('loginFormContent').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({phone, password})
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('admin_token', data.token);
+                    window.location.href = '/dashboard.html';
+                } else {
+                    document.getElementById('loginError').textContent = 'Numéro ou mot de passe incorrect';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Erreur connexion serveur';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        // ✅ SIGNUP
+        document.getElementById('signupFormContent').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('signupPhone').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            try {
+                const response = await fetch('/admin/signup', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, phone, password})
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`✅ Compte créé ! ${data.message}\n\nConnectez-vous maintenant.`);
+                    showLogin();
+                } else {
+                    const error = await response.json();
+                    document.getElementById('signupError').textContent = error.detail;
+                    document.getElementById('signupError').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('signupError').textContent = 'Erreur serveur';
+                document.getElementById('signupError').style.display = 'block';
+            }
+        });
+
+        // ✅ SWITCH FORMULAIRES
+        function showSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+        }
+    </script>
+</body>
+</html>

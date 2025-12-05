@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>_ap_bar - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+</head>
+<body>
+    <!-- HEADER ADMIN SÉCURISÉ -->
+    <div id="adminHeader" class="admin-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>🛠️ _ap_bar Admin</h1>
+                <div class="notification-badge" id="notificationBadge">0</div>
+            </div>
+            <div class="header-right">
+                <span id="adminInfo">👑 Chargement...</span>
+                <span class="status" id="connectionStatus">🔴 Déconnecté</span>
+                <span class="status" id="connectionStatus2">🔴 WebSocket</span>
+                <button class="btn-logout" onclick="logout()">🚪 Déconnexion</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- STATS -->
+        <header>
+            <div class="stats">
+                <div class="stat-card">
+                    <h2 id="pendingCount">0</h2>
+                    <span>📋 En attente</span>
+                </div>
+                <div class="stat-card">
+                    <h2 id="totalCount">0</h2>
+                    <span>📊 Total demandes</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- ONGLETS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('pending')">📋 En attente</button>
+            <button class="tab-btn" onclick="showTab('history')">📈 Historique</button>
+        </div>
+        
+        <!-- CONTROLES (seulement onglet pending) -->
+        <div class="controls" id="pendingControls">
+            <button class="btn refresh" onclick="loadPending()">🔄 Actualiser</button>
+            <button class="btn clear" onclick="clearAllPending()">🗑️ Vider tout</button>
+        </div>
+        
+        <!-- TABLEAU EN ATTENTE -->
+        <div id="pendingTab" class="table-container">
+            <table id="pendingTable">
+                <thead>
+                    <tr>
+                        <th>ID court</th>
+                        <th>Device ID</th>
+                        <th>📱 Téléphone</th>
+                        <th>📅 Mois</th>
+                        <th>🔑 Clé</th>
+                        <th>🕒 Date</th>
+                        <th>✅ Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <!-- TABLEAU HISTORIQUE -->
+        <div id="historyTab" class="table-container" style="display: none;">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>📱 Client</th>
+                        <th>📅 Mois</th>
+                        <th>🔑 Clé</th>
+                        <th>👑 Admin</th>
+                        <th>📊 Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
