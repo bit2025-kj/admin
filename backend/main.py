@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import crud, models
+from . import crud, models
 from database import engine, get_db
 import json
 from typing import List
